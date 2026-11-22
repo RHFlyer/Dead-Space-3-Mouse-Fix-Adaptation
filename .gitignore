@@ -1,0 +1,7 @@
+build/
+release/
+*.log
+*.user
+.vs/
+# The player's settings never belong in the repo.
+ds3_raw_mouse.ini

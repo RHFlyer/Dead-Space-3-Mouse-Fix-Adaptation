@@ -1,0 +1,37 @@
+Raw Input Mouse Fix: changelog
+==============================
+
+Newest first. Based on the Raw Input Mouse Fix by slopkhayzo (MIT):
+https://github.com/slopkhayzo/DeadSpace3-RawInputMouseFix
+
+1.0.0
+  - First public release: the fix as a DS3 Mod Loader add-on, made with the mod SDK (sdk\ds3mod.h). It is off until
+    you switch it on in the Mods panel, like every add-on. (The loader's private test builds shipped slopkhayzo's
+    own DS3RawMouse.asi, their version 1.1.2 plus the UseGameSlider setting, switched on.)
+  - Same fix: the same two game functions, the same maths, the same settings file (ds3_raw_mouse.ini, all keys
+    kept), the same hotkeys (F6 reload, F7 / F8 toggle, F9 / F10 multiplier), UseGameSlider, and the same
+    [modules] switch, raw_mouse.
+  - New defaults, the setup it was tested with: UseGameSlider is on, so the game's own Mouse Sensitivity slider
+    (settings > controls) sets the speed, and SensitivityMultiplier is 0.50, the speed at slider 50. The
+    standalone fix started at 1.00 with the slider off. F9 / F10 then do nothing; switch UseGameSlider off to use
+    them. A ds3_raw_mouse.ini you already have keeps its values.
+  - Both hooks are made with the SDK's hook (the loader checks the game's bytes and logs each hook); the fix's own
+    hook writer, thread suspension and wait for the game's code are gone, since the loader does all three.
+  - No thread of its own: hotkeys, the raw-input window check and the game's slider are polled from the frame
+    callback.
+  - Settings changed in the Mods panel apply at once; F6 still re-reads the file.
+  - Hot reload: a new build of DS3RawMouse.asi is swapped in while the game runs; unloading puts the game's window
+    procedure back. A build stays in memory once it has a window procedure in place, also with [mods]
+    hot_reload_free=1, so a message on its way through it never runs freed code.
+  - If another program or mod puts its own window procedure on top of the fix's, the fix leaves it there instead of
+    going on top again (which could loop between the two and crash the game). The standalone fix went on top again.
+  - Hotkeys are ignored while the Mods panel has the keyboard or another program is in front.
+  - A missing ds3_raw_mouse.ini is written with every key and its default, and the built-in defaults are the ones
+    that file has (multiplier 0.50, UseGameSlider on, third-person X 0.0007, Y 0.00185), so aim is the same with
+    or without the file.
+  - DS3RawMouse.log is in the mod's folder only (no fallback under %LOCALAPPDATA%), names the settings file without
+    its full path, and leaves out 5-second reports in which nothing happened. The 5-second report no longer counts
+    "other callers": through the SDK's hooks the caller is not visible.
+  - Refuses to start, and says so, if the standalone DS3RawMouse.asi is also running through an ASI loader.
+
+The standalone fix's own history (its versions up to 1.1.2) is in slopkhayzo's repository.
